@@ -24,4 +24,12 @@
         module="ScoutPostProcess"
         status="integration">
 	</info>
+	<configurations defaultconfmapping="default">
+        <conf name="default"/>
+    </configurations>
+	
+	<dependencies>
+ 	    <dependency org="org.apache.logging.log4j" name="log4j-slf4j-impl" rev="2.5"/>
+	    <dependency org="org.ostermiller" name="utils" rev="1.07.00"/>
+	</dependencies>
 </ivy-module>
