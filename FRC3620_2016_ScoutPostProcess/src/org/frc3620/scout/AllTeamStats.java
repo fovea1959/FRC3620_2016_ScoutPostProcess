@@ -98,9 +98,8 @@ public class AllTeamStats {
         logger.info("csv data = {}", Arrays.asList(s));
         int team = i(csv.getValueByLabel(TEAM));
         
-        if (team != 27) {
-          break;
-        }
+        // if (team != 27) break;
+        
         TeamStats t = rv.getTeamStats(team);
 
         if (tf(csv.getValueByLabel(CROSSED))) {
@@ -153,6 +152,22 @@ public class AllTeamStats {
     }
     return rv;
 
+  }
+  
+  public void writeCsv (String path, TeamStatsCsv teamStatsCsv) throws IOException {
+    CSVPrint csvPrint = new CSVPrinter(new FileWriter(path));
+    List<String> lList = teamStatsCsv.labels();
+    String[] sArray = new String[lList.size()];
+    csvPrint.println(lList.toArray(sArray));
+    
+    Set<Integer> teamNumbers = stats.keySet();
+    for (Integer teamNumber: teamNumbers) {
+      TeamStats t = stats.get(teamNumber);
+      lList = teamStatsCsv.values(t);
+      csvPrint.println(lList.toArray(sArray));
+      
+    }
+    csvPrint.close();
   }
 
 }

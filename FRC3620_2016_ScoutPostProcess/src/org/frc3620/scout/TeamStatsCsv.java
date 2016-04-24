@@ -1,7 +1,11 @@
 package org.frc3620.scout;
 
+import java.io.FileWriter;
 import java.util.*;
 import java.util.Map.Entry;
+
+import com.Ostermiller.util.CSVPrint;
+import com.Ostermiller.util.CSVPrinter;
 
 abstract public class TeamStatsCsv {
   
@@ -53,5 +57,7 @@ abstract public class TeamStatsCsv {
   public String s (int i) {
     return "" + i;
   }
+  
+
 
 }

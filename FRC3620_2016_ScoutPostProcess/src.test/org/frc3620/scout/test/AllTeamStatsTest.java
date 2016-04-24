@@ -1,5 +1,7 @@
 package org.frc3620.scout.test;
 
+import java.io.IOException;
+
 import org.frc3620.scout.AllTeamStats;
 import org.frc3620.scout.TeamStats;
 import org.frc3620.scout.TeamStatsCsv;
@@ -9,7 +11,7 @@ import org.junit.Test;
 public class AllTeamStatsTest {
 
   @Test
-  public void test() {
+  public void test() throws IOException {
     AllTeamStats allTeamStats = AllTeamStats.loadFromCsv("WildRankEveningFixed.csv");
     TeamStats t = allTeamStats.getTeamStats(27);
     System.out.println(t);
@@ -17,6 +19,8 @@ public class AllTeamStatsTest {
     TeamStatsCsv tsc = new TeamStatsCsvTearesa();
     System.out.println (tsc.labels());
     System.out.println (tsc.values(t));
+    
+    allTeamStats.writeCsv("output.csv", tsc);
   }
 
 }

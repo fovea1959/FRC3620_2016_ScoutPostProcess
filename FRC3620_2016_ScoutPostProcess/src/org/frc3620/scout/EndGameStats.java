@@ -50,7 +50,7 @@ public class EndGameStats {
   
   @Override
   public String toString() {
-    return "EndGameStats [challenge=" + challenge + ", cross=" + scale +  "]";
+    return "EndGameStats [challenge=" + challenge + ", scale=" + scale +  "]";
   }
 
 }
