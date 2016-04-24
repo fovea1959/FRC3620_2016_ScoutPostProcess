@@ -16,6 +16,17 @@ public class SuccessFail {
     sparkLine.append("-");
   }
   
+  public void success(int n) {
+    attempts += n;
+    successes += n;
+    for (int i = 0; i < n; i++ ) sparkLine.append("*");
+  }
+  
+  public void failure(int n) {
+    attempts += n;
+    for (int i = 0; i < n; i++ ) sparkLine.append("-");
+  }
+  
   public void skip() {
     sparkLine.append("\u00b7");
   }
@@ -33,8 +44,12 @@ public class SuccessFail {
   }
   
   public double getRatio() {
-    if (attempts == 0) return 0;
-    return ((double) successes) / attempts;
+    return Util.ratio(successes,  attempts);
+  }
+
+  @Override
+  public String toString() {
+    return "[" + successes + "/" + attempts + "]";
   }
 
 }
