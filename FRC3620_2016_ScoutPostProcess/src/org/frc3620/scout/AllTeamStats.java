@@ -26,6 +26,10 @@ public class AllTeamStats {
     }
     return rv;
   }
+  
+  public List<Integer> getTeamNumbers() {
+    return new ArrayList<Integer>(stats.keySet());
+  }
 
   static String readFile(String path, Charset encoding) throws IOException {
     byte[] encoded = Files.readAllBytes(Paths.get(path));

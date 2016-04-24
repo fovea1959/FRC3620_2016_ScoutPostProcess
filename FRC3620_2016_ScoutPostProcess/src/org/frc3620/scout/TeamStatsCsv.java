@@ -1,6 +1,7 @@
 package org.frc3620.scout;
 
 import java.io.FileWriter;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -58,6 +59,13 @@ abstract public class TeamStatsCsv {
     return "" + i;
   }
   
+  DecimalFormat f3Formatter = new DecimalFormat("#.###");
+
+  public String f3(double f) {
+    String rv = f3Formatter.format(f);
+    return rv;
+  }
+
 
 
 }

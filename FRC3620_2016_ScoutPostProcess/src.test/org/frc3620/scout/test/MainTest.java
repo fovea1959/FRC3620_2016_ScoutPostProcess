@@ -1,31 +1,24 @@
 package org.frc3620.scout.test;
 
 import java.awt.EventQueue;
-import java.io.IOException;
 import java.util.List;
-import java.util.Set;
 
 import org.frc3620.scout.AllTeamStats;
 import org.frc3620.scout.TeamStats;
 import org.frc3620.scout.TeamStatsCsv;
 import org.frc3620.scout.TeamStatsCsvTearesa;
 import org.frc3620.scout.gui.MainWindow;
-import org.junit.Test;
 
-public class AllTeamStatsTest {
-
-  @Test
-  public void test() throws IOException {
+public class MainTest {
+  public static void main (String[] args) {
     AllTeamStats allTeamStats = AllTeamStats.loadFromCsv("WildRankEveningFixed.csv");
     TeamStats t = allTeamStats.getTeamStats(27);
     System.out.println(t);
     
     TeamStatsCsv tsc = new TeamStatsCsvTearesa();
     List<String> labels = tsc.labels();
-    System.out.println (tsc.labels());
-    System.out.println (tsc.values(t));
     
-    allTeamStats.writeCsv("output.csv", tsc);
+    //allTeamStats.writeCsv("output.csv", tsc);
     
     EventQueue.invokeLater(new Runnable() {
       public void run() {
