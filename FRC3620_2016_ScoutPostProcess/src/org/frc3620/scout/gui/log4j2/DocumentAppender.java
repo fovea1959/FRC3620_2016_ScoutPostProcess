@@ -7,7 +7,6 @@ import java.util.concurrent.locks.*;
 import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
-import javax.swing.text.Document;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
@@ -18,7 +17,6 @@ import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.appender.AppenderLoggingException;
 import org.apache.logging.log4j.core.config.plugins.*;
 import org.apache.logging.log4j.core.layout.PatternLayout;
-import org.frc3620.scout.gui.log4j2.DocumentLogger.RunnableWriter;
 
 // note: class name need not match the @Plugin name.
 @SuppressWarnings("serial")
