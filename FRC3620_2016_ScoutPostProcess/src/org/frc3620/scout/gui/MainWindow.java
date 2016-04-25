@@ -39,6 +39,9 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class MainWindow {
   public static final Logger logger = LoggerFactory.getLogger(MainWindow.class);
@@ -68,7 +71,11 @@ public class MainWindow {
   /**
    * Launch the application.
    */
-  private static Object lock = new Object();
+  static Lock lock = new ReentrantLock();
+
+  static Condition windowDone = lock.newCondition();
+
+  static boolean done = false;
 
   public static void main(String[] args) {
     MainWindow window = new MainWindow();
@@ -90,8 +97,17 @@ public class MainWindow {
             public void windowClosed(WindowEvent e) {
               logger.info("window closed");
               super.windowClosed(e);
-              synchronized (lock) {
-                lock.notify();
+              logger.info("swing getting lock");
+              lock.lock();
+              logger.info("swing got lock");
+              try {
+                done = true;
+                windowDone.signalAll();
+                logger.info("swing signalled");
+              } finally {
+                logger.info("swing releasing lock");
+                lock.unlock();
+                logger.info("swing released lock");
               }
             }
 
@@ -103,19 +119,24 @@ public class MainWindow {
       }
     });
 
-    synchronized (lock) {
-      do {
-        try {
-          logger.info("waiting for lock");
-          lock.wait();
-          logger.info("got lock");
-        } catch (InterruptedException e) {
-          e.printStackTrace();
-        }
-      } while (window.frmWildstangScoutingData.isVisible());
+    do {
+      logger.info("main waiting for lock");
+      lock.lock();
+      logger.info("main got lock");
+      try {
+        logger.info("main waiting for condition");
+        windowDone.await();
+        logger.info("main got condition");
+      } catch (InterruptedException e) {
+        logger.error("Interrupted", e);
+      } finally {
+        logger.info("main releasing lock");
+        lock.unlock();
+        logger.info("main released lock");
+      }
+    } while (!done);
 
-      logger.info("done");
-    }
+    logger.info("main done");
 
   }
 

@@ -94,7 +94,7 @@ public class AllTeamStats {
     int lineNumber = 0;
     try {
       LabeledCSVParser csv = new LabeledCSVParser(new CSVParser(new FileReader(path)));
-      logger.info("csv labels = {}", Arrays.asList(csv.getLabels()));
+      logger.trace("csv labels = {}", Arrays.asList(csv.getLabels()));
       String[] s = null;
       while ((s = csv.getLine()) != null) {
         lineNumber = csv.getLastLineNumber();

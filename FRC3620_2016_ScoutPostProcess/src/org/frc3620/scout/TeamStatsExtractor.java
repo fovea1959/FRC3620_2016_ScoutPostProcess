@@ -53,4 +53,8 @@ abstract public class TeamStatsExtractor {
     }
     return rv;
   }
+  
+  public int getFieldCount() {
+    return extractorDefinitions.size();
+  }
 }

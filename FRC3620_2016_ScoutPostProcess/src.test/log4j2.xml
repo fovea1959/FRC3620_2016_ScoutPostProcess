@@ -11,7 +11,9 @@
   <Loggers>
     <Root level="info">
       <AppenderRef ref="Console"/>
+      <!-- 
       <AppenderRef ref="GUI"/>
+       -->
     </Root>
   </Loggers>
 </Configuration>
