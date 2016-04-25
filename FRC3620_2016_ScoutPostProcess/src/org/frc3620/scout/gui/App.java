@@ -3,6 +3,7 @@ package org.frc3620.scout.gui;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.Point;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -10,6 +11,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.text.DecimalFormat;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.locks.Condition;
@@ -25,8 +27,10 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import org.frc3620.scout.AllTeamStats;
+import org.frc3620.scout.RenderFlags;
 import org.frc3620.scout.TeamStatsExtractor;
 import org.frc3620.scout.TeamStatsExtractorTearesa;
+import org.frc3620.scout.gui.log4j2.DocumentAppender;
 import org.slf4j.*;
 
 public class App implements AppFrame.ActionAdapter {
@@ -45,11 +49,8 @@ public class App implements AppFrame.ActionAdapter {
   TeamStatsExtractor extractor;
 
   MyTableModel tableModel;
+  TableColumnAdjuster tca;
 
-  RightRenderer rightRenderer = new RightRenderer();
-
-  DecimalFormatRenderer decimalFormatRenderer = new DecimalFormatRenderer();
-  
   Dimension size;
   Point location;
 
@@ -71,13 +72,11 @@ public class App implements AppFrame.ActionAdapter {
     tableModel.setColumnClasses(columnClasses);
     jTable.setModel(tableModel);
 
-    for (int i = 0; i < columnClasses.length; i++) {
-      if (columnClasses[i].equals(Double.class)) {
-        jTable.getColumnModel().getColumn(i).setCellRenderer(decimalFormatRenderer);
-      } else {
-        jTable.getColumnModel().getColumn(i).setCellRenderer(rightRenderer);
-      }
+    EnumSet<RenderFlags>[] renderFlags = extractor.getRenderFlags();
+    for (int i = 0; i < renderFlags.length; i++) {
+      jTable.getColumnModel().getColumn(i).setCellRenderer(new MySuperRenderer(renderFlags[i]));
     }
+      
     new ExcelAdapter(appFrame.getTable());
     
     inputChooser.setCurrentDirectory(new File(appPreferences.getInputFilePath()));
@@ -119,10 +118,16 @@ public class App implements AppFrame.ActionAdapter {
         recordSize(e);
       }
     });
+    
+    //appFrame.getTable().setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+    tca = new TableColumnAdjuster(appFrame.getTable());
+    
+    adjustColumns();
   }
 
   int go() {
     EventQueue.invokeLater(new Runnable() {
+      @Override
       public void run() {
         try {
           appFrame.addWindowListener(new WindowAdapter() {
@@ -149,6 +154,16 @@ public class App implements AppFrame.ActionAdapter {
         } catch (Exception e) {
           e.printStackTrace();
         }
+      }
+    });
+
+    DocumentFrame documentFrame = new DocumentFrame();
+    EventQueue.invokeLater(new Runnable() {
+      
+      @Override
+      public void run() {
+        documentFrame.getTextPane().setDocument(DocumentAppender.document);
+        documentFrame.setVisible(true);
       }
     });
 
@@ -201,6 +216,7 @@ public class App implements AppFrame.ActionAdapter {
     } catch (Exception e) {
       rv = 1;
     }
+    System.exit(rv);
   }
 
   @Override
@@ -221,9 +237,18 @@ public class App implements AppFrame.ActionAdapter {
         List<Object> values = extractor.getValues(allTeamStats.getTeamStats(teamNumber));
         tableModel.addRow(new Vector<>(values));
       }
-      appFrame.getTable().repaint();
+      adjustColumns();
+      // TODO is this necessary?
+      //appFrame.getTable().repaint();
     }
     return true;
+  }
+  
+  void adjustColumns() {
+    tca.adjustColumns();
+    // TODO set the max size of the frame 
+    //appFrame.getContentPane().setMaximumSize(appFrame.getScrollPane().getPreferredSize());
+    //appFrame.pack();
   }
 
   @Override
@@ -237,7 +262,7 @@ public class App implements AppFrame.ActionAdapter {
       try {
         allTeamStats.writeCsv(fileToSave.getAbsolutePath(), extractor);
       } catch (Exception ex) {
-        new ExceptionDialog("Trobule writing " + fileToSave.getAbsolutePath(), ex);
+        new ExceptionDialog("Trouble writing " + fileToSave.getAbsolutePath(), ex);
       }
     }
     return true;
@@ -253,36 +278,40 @@ public class App implements AppFrame.ActionAdapter {
   }
 
   @SuppressWarnings("serial")
-  static class RightRenderer extends DefaultTableCellRenderer {
-    public RightRenderer() {
+  static class MySuperRenderer extends DefaultTableCellRenderer {
+    boolean fixedFont = false;
+    boolean ratio = false;
+    public MySuperRenderer(EnumSet<RenderFlags> renderFlags) {
       super();
-      setHorizontalAlignment(JLabel.RIGHT);
+      // could control this with RenderFlags
+      if (renderFlags.contains(RenderFlags.CENTERJUSTIFY)) {
+        setHorizontalAlignment(JLabel.CENTER);
+      } else if (renderFlags.contains(RenderFlags.LEFTJUSTIFY)) {
+        setHorizontalAlignment(JLabel.LEFT);
+      } else {
+        setHorizontalAlignment(JLabel.RIGHT);
+      }
+      fixedFont = renderFlags.contains(RenderFlags.FIXEDWIDTH);
+      ratio = renderFlags.contains(RenderFlags.RATIO);
+    }
+
+    private static final DecimalFormat formatter = new DecimalFormat("0.000");
+    private static final Font font = new Font("monospaced", Font.PLAIN, 12);
+
+    public Component getTableCellRendererComponent(JTable table, Object value,
+        boolean isSelected, boolean hasFocus, int row, int column) {
+      if (value != null && value instanceof Number && ratio) {
+        value = formatter.format((Number) value);
+      }
+      // And pass it on to parent class
+      super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row,
+          column);
+      if (fixedFont) setFont(font);
+      return this;
     }
   }
 
   @SuppressWarnings("serial")
-  static class DecimalFormatRenderer extends DefaultTableCellRenderer {
-    public DecimalFormatRenderer() {
-      super();
-      setHorizontalAlignment(JLabel.RIGHT);
-    }
-
-    private static final DecimalFormat formatter = new DecimalFormat("0.000");
-
-    public Component getTableCellRendererComponent(JTable table, Object value,
-        boolean isSelected, boolean hasFocus, int row, int column) {
-
-      // First format the cell value as required
-
-      value = formatter.format((Number) value);
-
-      // And pass it on to parent class
-
-      return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row,
-          column);
-    }
-  }
-
   class MyTableModel extends DefaultTableModel {
     public MyTableModel(Object[] columnNames, int rowCount) {
       super(columnNames, rowCount);

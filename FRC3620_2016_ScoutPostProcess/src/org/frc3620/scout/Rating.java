@@ -1,19 +1,27 @@
 package org.frc3620.scout;
 
 public class Rating {
-	int sum;
-	int attempts;
-	StringBuilder sparkLine = new StringBuilder();
+	private int sum;
+	private int attempts;
+	private StringBuilder sparkLine = new StringBuilder();
 	
-	public void skip() {
+	public void recordSkip() {
 		sparkLine.append("\u00b7");
 	}
 	
-	public void addRank(int i) {
+	public void recordRank(int i) {
 		// TODO fix this (single digit)
 		sparkLine.append("" + i);
 		sum += i;
 		attempts ++;
+	}
+	
+	public String getSparkline () {
+	  return sparkLine.toString();
+	}
+	
+	public double getAverageRating() {
+   return Util.ratio(sum, attempts);
 	}
 
 }

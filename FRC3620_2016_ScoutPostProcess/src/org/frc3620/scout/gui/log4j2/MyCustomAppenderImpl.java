@@ -1,4 +1,4 @@
-package org.frc3620.scout.gui;
+package org.frc3620.scout.gui.log4j2;
 
 import java.io.Serializable;
 import java.util.concurrent.locks.*;
@@ -10,6 +10,7 @@ import org.apache.logging.log4j.core.config.plugins.*;
 import org.apache.logging.log4j.core.layout.PatternLayout;
 
 // note: class name need not match the @Plugin name.
+@SuppressWarnings("serial")
 @Plugin(name="MyCustomAppender", category="Core", elementType="appender", printObject=true)
 public final class MyCustomAppenderImpl extends AbstractAppender {
 
@@ -31,9 +32,8 @@ public final class MyCustomAppenderImpl extends AbstractAppender {
     public void append(LogEvent event) {
         readLock.lock();
         try {
-            final byte[] bytes = getLayout().toByteArray(event);
-            System.out.write(">>>>>".getBytes());
-            System.out.write(bytes);
+          final byte[] bytes = getLayout().toByteArray(event);
+
         } catch (Exception ex) {
             if (!ignoreExceptions()) {
                 throw new AppenderLoggingException(ex);

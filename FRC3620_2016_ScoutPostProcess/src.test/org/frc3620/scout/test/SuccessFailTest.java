@@ -1,7 +1,5 @@
 package org.frc3620.scout.test;
 
-import static org.junit.Assert.*;
-
 import org.frc3620.scout.SuccessFail;
 import org.junit.Test;
 

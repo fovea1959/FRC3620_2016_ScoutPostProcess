@@ -1,6 +1,7 @@
 package org.frc3620.scout.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -12,21 +13,20 @@ import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.AbstractAction;
+
 import java.awt.event.ActionEvent;
-import javax.swing.Action;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.Rectangle;
-import java.awt.Frame;
 
+@SuppressWarnings("serial")
 public class AppFrame extends JFrame {
 
   private JPanel contentPane;
   private JTable table;
   
   private ActionAdapter actionAdapter;
+  private JScrollPane scrollPane;
 
   /**
    * Launch the application.
@@ -107,16 +107,22 @@ public class AppFrame extends JFrame {
     contentPane.setLayout(new BorderLayout(0, 0));
     setContentPane(contentPane);
     
-    JScrollPane scrollPane = new JScrollPane();
+    scrollPane = new JScrollPane();
     contentPane.add(scrollPane, BorderLayout.CENTER);
     
     table = new JTable();
+    table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     table.setAutoCreateRowSorter(true);
     scrollPane.setViewportView(table);
   }
   
   public JTable getTable() {
     return table;
+  }
+  
+  public Component getScrollPane() {
+    Component c = table.getParent().getParent();
+    return c;
   }
   
   static public interface ActionAdapter {

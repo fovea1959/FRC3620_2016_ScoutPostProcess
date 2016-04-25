@@ -1,9 +1,6 @@
 package org.frc3620.scout.test;
 
-import java.awt.EventQueue;
 import java.io.IOException;
-import java.util.List;
-import java.util.Set;
 
 import org.frc3620.scout.AllTeamStats;
 import org.frc3620.scout.TeamStats;
@@ -20,7 +17,6 @@ public class AllTeamStatsTest {
     System.out.println(t);
     
     TeamStatsExtractor tsc = new TeamStatsExtractorTearesa();
-    String[] labels = tsc.getLabels();
     System.out.println (tsc.getLabels());
     System.out.println (tsc.getValues(t));
     

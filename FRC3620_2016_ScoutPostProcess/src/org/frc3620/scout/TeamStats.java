@@ -3,6 +3,8 @@ package org.frc3620.scout;
 public class TeamStats {
   int team;
   
+  int matches;
+  
   AutoDefenseStats autoDefense = new AutoDefenseStats();
   
   SuccessFail autoHighGoals = new SuccessFail(), autoLowGoals = new SuccessFail();

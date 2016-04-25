@@ -79,6 +79,8 @@ public class AllTeamStats {
   
   static final String FOULS = "Fouls";
   static final String T_FOULS = "T Fouls";
+  
+  static final String DEFENSE_RATING = "Defense Rating";
 
   static boolean tf(String s) {
     // TODO thjis is NOT robust
@@ -98,12 +100,14 @@ public class AllTeamStats {
       String[] s = null;
       while ((s = csv.getLine()) != null) {
         lineNumber = csv.getLastLineNumber();
-        logger.info("csv data = {}", Arrays.asList(s));
+        logger.trace("csv data = {}", Arrays.asList(s));
         int team = i(csv.getValueByLabel(TEAM));
         
         // if (team != 27) break;
         
         TeamStats t = rv.getTeamStats(team);
+        
+        t.matches++;
 
         if (tf(csv.getValueByLabel(CROSSED))) {
           t.autoDefense.recordCrossed();
@@ -143,6 +147,13 @@ public class AllTeamStats {
         
         t.fouls += i(csv.getValueByLabel(FOULS));
         t.fouls += i(csv.getValueByLabel(T_FOULS));
+        
+        String defenseRating = csv.getValueByLabel(DEFENSE_RATING);
+        if (defenseRating.equals(NA)) {
+          t.defense.recordSkip();
+        } else {
+          t.defense.recordRank(i(defenseRating));
+        }
 
       }
       csv.close();
@@ -150,7 +161,7 @@ public class AllTeamStats {
       logger.error("IOException at line {}: {}", lineNumber, e);
       e.printStackTrace();
     } catch (Exception e) {
-      logger.error("IOException at line {}: {}", lineNumber, e);
+      logger.error("Exception at line {}: {}", lineNumber, e);
       e.printStackTrace();
     }
     return rv;
@@ -167,6 +178,7 @@ public class AllTeamStats {
       TeamStats t = stats.get(teamNumber);
       List<Object> vList = teamStatsCsv.getValues(t);
       String[] vArray = new String[vList.size()];
+      // TODO need to be careful of strings that only contain digits
       for (int i = 0; i < vList.size(); i++) 
         vArray[i] = vList.get(i).toString();
       csvPrint.println(vArray);
