@@ -167,8 +167,11 @@ public class AllTeamStats {
     Set<Integer> teamNumbers = stats.keySet();
     for (Integer teamNumber: teamNumbers) {
       TeamStats t = stats.get(teamNumber);
-      lList = teamStatsCsv.values(t);
-      csvPrint.println(lList.toArray(sArray));
+      List<Object> vList = teamStatsCsv.values(t);
+      String[] vArray = new String[vList.size()];
+      for (int i = 0; i < vList.size(); i++) 
+        vArray[i] = vList.get(i).toString();
+      csvPrint.println(vArray);
       
     }
     csvPrint.close();

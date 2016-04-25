@@ -4,31 +4,31 @@ public class TeamStatsCsvTearesa extends TeamStatsCsv {
 
   @Override
   void addAllGetters() {
-    addGetter("team", (t) -> "" + t.team);
+    addGetter("team", (t) -> t.team);
 
-    addGetter("auto.reach", (t) -> s(t.autoDefense.getReaches()));
-    addGetter("auto.attempts", (t) -> s(t.autoDefense.getReachAttempts()));
-    addGetter("auto.cross", (t) -> s(t.autoDefense.getCrosses()));
-    addGetter("auto.reach.ratio", (t) -> f3(t.autoDefense.getReachRatio()));
-    addGetter("auto.cross.ratio", (t) -> f3(t.autoDefense.getCrossRatio()));
+    addGetter("auto.reach", (t) -> t.autoDefense.getReaches());
+    addGetter("auto.attempts", (t) -> t.autoDefense.getReachAttempts());
+    addGetter("auto.cross", (t) -> t.autoDefense.getCrosses());
+    addGetter("auto.reach.ratio", (t) -> t.autoDefense.getReachRatio());
+    addGetter("auto.cross.ratio", (t) -> t.autoDefense.getCrossRatio());
 
-    addGetter("auto.high", (t) -> s(t.autoHighGoals.getSuccesses()));
-    addGetter("auto.low", (t) -> s(t.autoLowGoals.getSuccesses()));
+    addGetter("auto.high", (t) -> t.autoHighGoals.getSuccesses());
+    addGetter("auto.low", (t) -> t.autoLowGoals.getSuccesses());
 
-    addGetter("tele.high", (t) -> s(t.teleopHighGoals.getSuccesses()));
-    addGetter("tele.high.ratio", (t) -> f3(t.teleopHighGoals.getRatio()));
-    addGetter("tele.low", (t) -> s(t.teleopLowGoals.getSuccesses()));
-    addGetter("tele.low.ratio", (t) -> f3(t.teleopLowGoals.getRatio()));
-    addGetter("tele.boulderpts", (t) -> s(5 * t.teleopHighGoals.getSuccesses() + 2
-        * t.teleopLowGoals.getSuccesses()));
+    addGetter("tele.high", (t) -> t.teleopHighGoals.getSuccesses());
+    addGetter("tele.high.ratio", (t) -> t.teleopHighGoals.getRatio());
+    addGetter("tele.low", (t) -> t.teleopLowGoals.getSuccesses());
+    addGetter("tele.low.ratio", (t) -> t.teleopLowGoals.getRatio());
+    addGetter("tele.boulderpts", (t) -> 5 * t.teleopHighGoals.getSuccesses() + 2
+        * t.teleopLowGoals.getSuccesses());
 
-    addGetter("end.challenges", (t) -> s(t.endGame.getChallenges()));
-    addGetter("end.scales", (t) -> s(t.endGame.getScales()));
-    addGetter("end.scale.ratio", (t) -> f3(t.endGame.getScaleRatio()));
+    addGetter("end.challenges", (t) -> t.endGame.getChallenges());
+    addGetter("end.scales", (t) -> t.endGame.getScales());
+    addGetter("end.scale.ratio", (t) -> t.endGame.getScaleRatio());
 
-    addGetter("fouls", (t) -> s(t.fouls));
+    addGetter("fouls", (t) -> t.fouls);
 
-    addGetter("team", (t) -> "" + t.team);
+    addGetter("team", (t) -> t.team);
   }
 
 }

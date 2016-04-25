@@ -11,7 +11,7 @@ import com.Ostermiller.util.CSVPrinter;
 abstract public class TeamStatsCsv {
   
   interface F {
-    public String x (TeamStats t);
+    public Object x (TeamStats t);
   }
   
   class SF {
@@ -35,8 +35,8 @@ abstract public class TeamStatsCsv {
     fAll.add(new SF(s, f));
   }
   
-  public List<String> values (TeamStats t) {
-    List<String> rv = new ArrayList<>();
+  public List<Object> values (TeamStats t) {
+    List<Object> rv = new ArrayList<>();
     for (SF sf: fAll) {
       rv.add(sf.f.x(t));
     }

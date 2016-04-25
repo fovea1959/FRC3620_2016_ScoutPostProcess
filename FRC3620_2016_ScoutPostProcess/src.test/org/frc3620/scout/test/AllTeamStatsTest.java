@@ -48,7 +48,7 @@ public class AllTeamStatsTest {
           
           window.setData(s, d);
           
-          window.frame.setVisible(true);
+          window.frmWildstangScoutingData.setVisible(true);
         } catch (Exception e) {
           e.printStackTrace();
         }
