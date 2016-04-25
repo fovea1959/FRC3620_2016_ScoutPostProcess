@@ -48,7 +48,6 @@ public class AppFrame extends JFrame {
    * Create the frame.
    */
   public AppFrame() {
-    setExtendedState(Frame.MAXIMIZED_BOTH);
     setTitle("Average Joes 2016 Scouting Data Summarizer");
     addWindowListener(new WindowAdapter() {
       @Override

@@ -1,7 +1,11 @@
 package org.frc3620.scout.gui;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Point;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -13,6 +17,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -26,6 +31,8 @@ import org.slf4j.*;
 
 public class App implements AppFrame.ActionAdapter {
   public static final Logger logger = LoggerFactory.getLogger(App.class);
+  
+  AppPreferences appPreferences = new AppPreferences();
 
   JFileChooser inputChooser = new JFileChooser(".");
 
@@ -42,6 +49,9 @@ public class App implements AppFrame.ActionAdapter {
   RightRenderer rightRenderer = new RightRenderer();
 
   DecimalFormatRenderer decimalFormatRenderer = new DecimalFormatRenderer();
+  
+  Dimension size;
+  Point location;
 
   Lock lock = new ReentrantLock();
 
@@ -69,6 +79,46 @@ public class App implements AppFrame.ActionAdapter {
       }
     }
     new ExcelAdapter(appFrame.getTable());
+    
+    inputChooser.setCurrentDirectory(new File(appPreferences.getInputFilePath()));
+    outputChooser.setCurrentDirectory(new File(appPreferences.getOutputFilePath()));
+    
+    {
+      int x = appPreferences.getX();
+      int y = appPreferences.getY();
+      int w = appPreferences.getW();
+      int h = appPreferences.getH();
+      appFrame.setBounds(x, y, w, h);
+      size = appFrame.getSize();
+      location = appFrame.getLocation();
+      
+      if (appPreferences.getMaximized()) {
+        appFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+      }
+    }
+    
+    appFrame.addComponentListener(new ComponentListener() {
+      
+      @Override
+      public void componentShown(ComponentEvent e) {
+        recordSize(e);
+      }
+      
+      @Override
+      public void componentResized(ComponentEvent e) {
+        recordSize(e);
+      }
+      
+      @Override
+      public void componentMoved(ComponentEvent e) {
+        recordSize(e);
+      }
+      
+      @Override
+      public void componentHidden(ComponentEvent e) {
+        recordSize(e);
+      }
+    });
   }
 
   int go() {
@@ -119,8 +169,28 @@ public class App implements AppFrame.ActionAdapter {
       }
     } while (!windowIsClosed);
 
-    logger.info("main done");
+    logger.info("main done, saving preferences");
+    
+    appPreferences.setInputFilePath(inputChooser.getCurrentDirectory().getPath());
+    appPreferences.setOutputFilePath(outputChooser.getCurrentDirectory().getPath());
+    
+    appPreferences.setX((int) location.getX());
+    appPreferences.setY((int) location.getY());
+    appPreferences.setW((int) size.getWidth());
+    appPreferences.setH((int) size.getHeight());
+    logger.info("location {} size {} bounds {}", location, size, appFrame.getBounds());
+    
+    appPreferences.setMaximized(appFrame.getExtendedState() == JFrame.MAXIMIZED_BOTH);
+    
     return 0;
+  }
+  
+  void recordSize(ComponentEvent e) {
+    if (appFrame.getExtendedState() == JFrame.NORMAL) {
+      size = appFrame.getSize();
+      location = appFrame.getLocation();
+      logger.info("resizing event {} happened; saving size {} location {}", e, size, location);
+    }
   }
 
   public static void main(String[] args) {
