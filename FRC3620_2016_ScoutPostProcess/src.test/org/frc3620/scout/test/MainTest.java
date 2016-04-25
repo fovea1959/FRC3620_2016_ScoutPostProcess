@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.frc3620.scout.AllTeamStats;
 import org.frc3620.scout.TeamStats;
-import org.frc3620.scout.TeamStatsCsv;
-import org.frc3620.scout.TeamStatsCsvTearesa;
+import org.frc3620.scout.TeamStatsExtractor;
+import org.frc3620.scout.TeamStatsExtractorTearesa;
 import org.frc3620.scout.gui.MainWindow;
 
 public class MainTest {
@@ -15,8 +15,8 @@ public class MainTest {
     TeamStats t = allTeamStats.getTeamStats(27);
     System.out.println(t);
     
-    TeamStatsCsv tsc = new TeamStatsCsvTearesa();
-    List<String> labels = tsc.labels();
+    TeamStatsExtractor tsc = new TeamStatsExtractorTearesa();
+    String[] labels = tsc.getLabels();
     
     //allTeamStats.writeCsv("output.csv", tsc);
     
@@ -25,21 +25,22 @@ public class MainTest {
         try {
           MainWindow window = new MainWindow();
           
-          String[] s = new String[labels.size()];
-          s = labels.toArray(s);
+          //String[] s = new String[labels.size()];
+          //s = labels.toArray(s);
           
           List<Integer> teamNumbers = allTeamStats.getTeamNumbers();
-          String[][] d = new String[teamNumbers.size()][labels.size()];
+          Object[][] d = new String[teamNumbers.size()][labels.length];
           
           for (int i = 0; i < teamNumbers.size(); i++) {
             Integer teamNumber = teamNumbers.get(i);
-            List<String> values = tsc.values(allTeamStats.getTeamStats(teamNumber));
+            List<Object> values = tsc.getValues(allTeamStats.getTeamStats(teamNumber));
             for (int j = 0; j < values.size(); j++) {
               d[i][j] = values.get(j);
             }
           }
-          
-          window.setData(s, d);
+
+          window.setTeamStatsExtractor(tsc);
+          window.setData(d);
           
           window.frmWildstangScoutingData.setVisible(true);
         } catch (Exception e) {

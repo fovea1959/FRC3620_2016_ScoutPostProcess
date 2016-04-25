@@ -14,10 +14,11 @@
 	xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
 	<info organisation="frc3620" module="ScoutPostProcess" status="integration">
 	</info>
-	<configurations defaultconfmapping="default">
-		<conf name="default" />
-	</configurations>
-
+    <configurations>
+        <conf name="compile" description="Libraries needed to for compilation"/>
+        <conf name="build" extends="compile"/>
+        <conf name="runtime" extends="compile" description="Libraries that need to be included with project jar" />
+    </configurations>
 	<dependencies>
 		<dependency org="org.apache.logging.log4j" name="log4j-api" rev="2.5"/>
 		<dependency org="org.apache.logging.log4j" name="log4j-core"

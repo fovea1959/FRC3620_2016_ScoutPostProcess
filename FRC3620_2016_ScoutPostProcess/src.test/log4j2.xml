@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN">
+<Configuration status="WARN" packages="org.frc3620.scout.gui">
   <Appenders>
     <Console name="Console" target="SYSTEM_OUT">
       <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
     </Console>
+    <MyCustomAppender name="GUI">
+      <PatternLayout pattern="[%t] %-5level %logger{36} - %msg%n"/>
+    </MyCustomAppender>
   </Appenders>
   <Loggers>
     <Root level="info">
       <AppenderRef ref="Console"/>
+      <AppenderRef ref="GUI"/>
     </Root>
   </Loggers>
 </Configuration>

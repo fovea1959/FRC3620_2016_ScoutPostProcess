@@ -2,7 +2,6 @@ package org.frc3620.scout;
 
 import java.io.*;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -158,16 +157,15 @@ public class AllTeamStats {
 
   }
   
-  public void writeCsv (String path, TeamStatsCsv teamStatsCsv) throws IOException {
+  public void writeCsv (String path, TeamStatsExtractor teamStatsCsv) throws IOException {
     CSVPrint csvPrint = new CSVPrinter(new FileWriter(path));
-    List<String> lList = teamStatsCsv.labels();
-    String[] sArray = new String[lList.size()];
-    csvPrint.println(lList.toArray(sArray));
+    String[] labels = teamStatsCsv.getLabels();
+    csvPrint.println(labels);
     
     Set<Integer> teamNumbers = stats.keySet();
     for (Integer teamNumber: teamNumbers) {
       TeamStats t = stats.get(teamNumber);
-      List<Object> vList = teamStatsCsv.values(t);
+      List<Object> vList = teamStatsCsv.getValues(t);
       String[] vArray = new String[vList.size()];
       for (int i = 0; i < vList.size(); i++) 
         vArray[i] = vList.get(i).toString();
