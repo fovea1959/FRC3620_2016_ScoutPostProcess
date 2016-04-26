@@ -28,5 +28,8 @@
 			rev="2.5" />
 		<dependency org="org.slf4j" name="slf4j-api" rev="1.7.21" />
 		<dependency org="org.ostermiller" name="utils" rev="1.07.00" />
+		
+		<dependency org="org.apache.poi" name="poi" rev="3.14"/>
+		<dependency org="org.apache.poi" name="poi-ooxml" rev="3.14"/>
 	</dependencies>
 </ivy-module>

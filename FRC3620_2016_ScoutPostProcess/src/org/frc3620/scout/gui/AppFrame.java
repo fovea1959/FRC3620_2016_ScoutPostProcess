@@ -78,13 +78,21 @@ public class AppFrame extends JFrame {
     });
     mnFile.add(mntmOpen);
     
-    JMenuItem mntmSave = new JMenuItem("Save");
-    mntmSave.addActionListener(new ActionListener() {
+    JMenuItem mntmSaveCsv = new JMenuItem("Save CSV");
+    mntmSaveCsv.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        if (actionAdapter != null) actionAdapter.fileSave();
+        if (actionAdapter != null) actionAdapter.fileSaveCsv();
       }
     });
-    mnFile.add(mntmSave);
+    mnFile.add(mntmSaveCsv);
+    
+    JMenuItem mntmSaveExcel = new JMenuItem("Save Excel");
+    mntmSaveExcel.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent arg0) {
+        if (actionAdapter != null) actionAdapter.fileSaveExcel();
+      }
+    });
+    mnFile.add(mntmSaveExcel);
     
     JSeparator separator = new JSeparator();
     mnFile.add(separator);
@@ -127,7 +135,8 @@ public class AppFrame extends JFrame {
   
   static public interface ActionAdapter {
     public boolean fileOpen();
-    public boolean fileSave();
+    public boolean fileSaveCsv();
+    public boolean fileSaveExcel();
     public boolean fileExit();
   }
 

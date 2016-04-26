@@ -33,7 +33,7 @@ public final class MyCustomAppenderImpl extends AbstractAppender {
         readLock.lock();
         try {
           final byte[] bytes = getLayout().toByteArray(event);
-
+          System.out.println (new String(bytes));
         } catch (Exception ex) {
             if (!ignoreExceptions()) {
                 throw new AppenderLoggingException(ex);

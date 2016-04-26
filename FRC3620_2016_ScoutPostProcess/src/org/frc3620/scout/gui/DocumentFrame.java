@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JTextPane;
 
+@SuppressWarnings("serial")
 public class DocumentFrame extends JFrame {
 
   private JPanel contentPane;

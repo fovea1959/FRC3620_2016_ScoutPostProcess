@@ -252,7 +252,7 @@ public class App implements AppFrame.ActionAdapter {
   }
 
   @Override
-  public boolean fileSave() {
+  public boolean fileSaveCsv() {
     outputChooser.setDialogTitle("Specify a file to save");
 
     int userSelection = outputChooser.showSaveDialog(appFrame);
@@ -261,6 +261,23 @@ public class App implements AppFrame.ActionAdapter {
       File fileToSave = outputChooser.getSelectedFile();
       try {
         allTeamStats.writeCsv(fileToSave.getAbsolutePath(), extractor);
+      } catch (Exception ex) {
+        new ExceptionDialog("Trouble writing " + fileToSave.getAbsolutePath(), ex);
+      }
+    }
+    return true;
+  }
+
+  @Override
+  public boolean fileSaveExcel() {
+    outputChooser.setDialogTitle("Specify a file to save");
+
+    int userSelection = outputChooser.showSaveDialog(appFrame);
+
+    if (userSelection == JFileChooser.APPROVE_OPTION) {
+      File fileToSave = outputChooser.getSelectedFile();
+      try {
+        allTeamStats.writeExcel(fileToSave.getAbsolutePath(), extractor);
       } catch (Exception ex) {
         new ExceptionDialog("Trouble writing " + fileToSave.getAbsolutePath(), ex);
       }

@@ -6,6 +6,14 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +33,7 @@ public class AllTeamStats {
     }
     return rv;
   }
-  
+
   public List<Integer> getTeamNumbers() {
     return new ArrayList<Integer>(stats.keySet());
   }
@@ -76,17 +84,18 @@ public class AllTeamStats {
   static final String SCALE_FAIL = "Scale Fail";
 
   static final String SCALE_SUCCESS = "Scale Success";
-  
+
   static final String FOULS = "Fouls";
+
   static final String T_FOULS = "T Fouls";
-  
+
   static final String DEFENSE_RATING = "Defense Rating";
 
   static boolean tf(String s) {
     // TODO thjis is NOT robust
     return !s.equals("0");
   }
-  
+
   static int i(String s) {
     return Integer.parseInt(s);
   }
@@ -102,11 +111,11 @@ public class AllTeamStats {
         lineNumber = csv.getLastLineNumber();
         logger.trace("csv data = {}", Arrays.asList(s));
         int team = i(csv.getValueByLabel(TEAM));
-        
+
         // if (team != 27) break;
-        
+
         TeamStats t = rv.getTeamStats(team);
-        
+
         t.matches++;
 
         if (tf(csv.getValueByLabel(CROSSED))) {
@@ -144,10 +153,10 @@ public class AllTeamStats {
         } else if (tf(csv.getValueByLabel(SCALE_SUCCESS))) {
           t.endGame.recordScaled();
         }
-        
+
         t.fouls += i(csv.getValueByLabel(FOULS));
         t.fouls += i(csv.getValueByLabel(T_FOULS));
-        
+
         String defenseRating = csv.getValueByLabel(DEFENSE_RATING);
         if (defenseRating.equals(NA)) {
           t.defense.recordSkip();
@@ -167,24 +176,89 @@ public class AllTeamStats {
     return rv;
 
   }
-  
-  public void writeCsv (String path, TeamStatsExtractor teamStatsCsv) throws IOException {
+
+  public void writeCsv(String path, TeamStatsExtractor teamStatsCsv) throws IOException {
     CSVPrint csvPrint = new CSVPrinter(new FileWriter(path));
     String[] labels = teamStatsCsv.getLabels();
     csvPrint.println(labels);
-    
+
     Set<Integer> teamNumbers = stats.keySet();
-    for (Integer teamNumber: teamNumbers) {
+    for (Integer teamNumber : teamNumbers) {
       TeamStats t = stats.get(teamNumber);
       List<Object> vList = teamStatsCsv.getValues(t);
       String[] vArray = new String[vList.size()];
       // TODO need to be careful of strings that only contain digits
-      for (int i = 0; i < vList.size(); i++) 
+      for (int i = 0; i < vList.size(); i++)
         vArray[i] = vList.get(i).toString();
       csvPrint.println(vArray);
-      
+
     }
     csvPrint.close();
+  }
+
+  public void writeExcel(String path, TeamStatsExtractor teamStatsCsv) throws IOException {
+    Workbook workBook = new XSSFWorkbook();
+    Sheet sheet = workBook.createSheet("Main Sheet");
+
+    Map<String, CellStyle> styles = createStyles(workBook);
+
+    String[] labels = teamStatsCsv.getLabels();
+
+    Row row = sheet.createRow(0);
+    for (int col = 0; col < labels.length; col++) {
+      Cell headerCell = row.createCell(col);
+      headerCell.setCellStyle(styles.get("header"));
+      headerCell.setCellValue(labels[col]);
+    }
+
+    int rowNumber = 1;
+
+    Set<Integer> teamNumbers = stats.keySet();
+    for (Integer teamNumber : teamNumbers) {
+      TeamStats t = stats.get(teamNumber);
+      List<Object> vList = teamStatsCsv.getValues(t);
+      row = sheet.createRow(rowNumber++);
+      for (int col = 0; col < vList.size(); col++) {
+        Cell cell = row.createCell(col);
+        Object o = vList.get(col);
+        if (o instanceof Number) {
+          cell.setCellValue(((Number) o).doubleValue());
+        } else if (o instanceof String) {
+          cell.setCellValue((String) o);
+        } else {
+          cell.setCellValue(o.toString());
+        }
+      }
+    }
+
+    FileOutputStream out = new FileOutputStream(path);
+    workBook.write(out);
+    out.close();
+  }
+
+  static Map<String, CellStyle> createStyles(Workbook wb) {
+    Map<String, CellStyle> styles = new HashMap<String, CellStyle>();
+    CellStyle style;
+
+    Font headerFont = wb.createFont();
+    headerFont.setFontHeightInPoints((short) 14);
+    headerFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+    style = wb.createCellStyle();
+    style.setAlignment(CellStyle.ALIGN_CENTER);
+    style.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+    style.setFont(headerFont);
+    style.setFillForegroundColor(IndexedColors.LIGHT_CORNFLOWER_BLUE.getIndex());
+    style.setFillPattern(CellStyle.SOLID_FOREGROUND);
+    styles.put("header", style);
+
+    String[] nfmt = { "#,##0.00", "$#,##0.00", "m/d/yyyy" };
+    for (String fmt : nfmt) {
+      style = wb.createCellStyle();
+      style.setDataFormat(wb.createDataFormat().getFormat(fmt));
+      styles.put(fmt, style);
+    }
+
+    return styles;
   }
 
 }
