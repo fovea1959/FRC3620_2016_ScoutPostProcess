@@ -13,7 +13,7 @@
 
 	<target name="retrieve">
 		<ivy:settings/>
-		<ivy:resolve />
+		<ivy:resolve/>
 		<ivy:cachepath pathid="build.path" conf="compile" />
 		<ivy:cachepath pathid="runtime.path" conf="runtime" />
 	</target>
@@ -44,9 +44,9 @@
 		<echo>Classpath is ${toString:runtime.path}</echo>
 
 		<!--
-		<ivy:retrieve pattern="${dist.dir}/lib/[artifact]-[revision].[ext]" type="bundle,jar" />
-		-->
 		<ivy:retrieve pattern="${dist.dir}/lib/[artifact]-[revision].[ext]" />
+		-->
+		<ivy:retrieve pattern="${dist.dir}/lib/[artifact]-[revision].[ext]" type="bundle,jar" />
 
 		<manifestclasspath property="manifest.classpath" jarfile="${dist.jar}">
 			<classpath>
